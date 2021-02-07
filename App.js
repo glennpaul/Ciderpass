@@ -12,43 +12,29 @@ import {
   Alert,
   TextInput,
   ScrollView,
+  FlatList,
 } from "react-native";
+import Cider from "./src/components/CiderItem";
+import CiderInput from "./src/components/CiderInput";
 
 export default function App() {
-  const [newCider, addNewCider] = useState("");
   const [currentCiders, addCiderToList] = useState([]);
-  const textInputHandler = (enteredText) => {
-    addNewCider(enteredText);
-  };
-  const addNewCiderToList = () => {
-    addCiderToList((currentCiders) => [...currentCiders, newCider]);
+  const addNewCiderToList = ciderToAdd => {
+    addCiderToList((currentCiders) => [
+      ...currentCiders,
+      { id: Math.random().toString(), val: ciderToAdd },
+    ]);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.ciderRow}>
-        <TextInput
-          placeholder="Add cider here..."
-          style={styles.textInputStyle}
-          onChangeText={textInputHandler}
-          value={newCider}
-        ></TextInput>
-        <View style={styles.buttonView}>
-          <Button
-            title="Add Cider"
-            onPress={() => {
-              addNewCiderToList();
-            }}
-          />
-        </View>
-      </View>
-      <ScrollView style={styles.listContainer}>
-        {currentCiders.map((cider) => (
-            <View style={styles.rounder} >
-          <Text style={styles.ciderCard} key={cider}>{cider}</Text>
-          </View>
-        ))}
-      </ScrollView>
+      <CiderInput onAddCider = {addNewCiderToList}/>
+      <FlatList
+        style={styles.flatlist}
+        keyExtractor={(item, index) => item.id}
+        data={currentCiders}
+        renderItem={(ciderItem) => <Cider cider={ciderItem.item.val} />}
+      />
     </SafeAreaView>
   );
 }
@@ -58,37 +44,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "white",
   },
+  flatlist: {
+    paddingTop: 10,
+    height: "100%",
+  },
   listContainer: {
     flexDirection: "column",
     backgroundColor: "white",
-  },
-  ciderRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignContent: "center",
-    marginLeft: 20,
-    marginRight: 10,
-  },
-  textInputStyle: {
-    flex: 1,
-    backgroundColor: "white",
-    borderBottomWidth: 2,
-    borderBottomColor: "dodgerblue",
-    marginRight: 10,
-  },
-  buttonView: {
-    backgroundColor: "white",
-    alignContent: "center",
-    justifyContent: "center",
-  },
-  ciderCard: {
-    margin: 5,
-    padding: 5,
-  },
-  rounder: {
-    backgroundColor: "dodgerblue",
-    borderRadius: 10,
-    borderWidth: 3,
-    margin: 5,
   },
 });
